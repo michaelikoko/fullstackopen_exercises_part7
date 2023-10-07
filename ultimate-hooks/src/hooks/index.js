@@ -1,39 +1,38 @@
-import { useState,useEffect } from "react"
+import { useState, useEffect } from 'react'
 import axios from 'axios'
 
 export const useField = (type) => {
-    const [value, setValue] = useState('')
+  const [value, setValue] = useState('')
 
-    const onChange = (event) => {
-        setValue(event.target.value)
-    }
+  const onChange = (event) => {
+    setValue(event.target.value)
+  }
 
-    const reset = () => setValue('')
-    const fieldProps = { type, value, onChange }
+  const reset = () => setValue('')
+  const fieldProps = { type, value, onChange }
 
-    return {
-        fieldProps,
-        reset
-    }
+  return {
+    fieldProps,
+    reset,
+  }
 }
 
 export const useResource = (baseUrl) => {
-    const [resources, setResources] = useState([])
+  const [resources, setResources] = useState([])
 
-    useEffect(()=>{
-        axios.get(baseUrl).then(res => setResources(res.data))
-    }, [baseUrl])
+  useEffect(() => {
+    axios.get(baseUrl).then((res) => setResources(res.data))
+  }, [baseUrl])
 
+  const create = (resource) => {
+    axios
+      .post(baseUrl, resource)
+      .then((res) => setResources((prev) => [...prev, res.data]))
+  }
 
-    const create = (resource) => {
-        axios.post(baseUrl, resource).then(res => setResources(prev => [...prev, res.data]))
-    }
+  const service = {
+    create,
+  }
 
-    const service = {
-        create
-    }
-
-    return [
-        resources, service
-    ]
+  return [resources, service]
 }
